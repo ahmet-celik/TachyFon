@@ -26,6 +26,7 @@ function IncrementalFontLoader(fontname) {
   this.metaname = fontname.replace(/-/g, '_') + '_metadata';
   this.dirty = false;
   this.newChars = false;
+  this.latestRequest = 0;
   window.IncrementalFonts = window.IncrementalFonts || {};
   var fontmetaobj;
   try {
@@ -37,6 +38,9 @@ function IncrementalFontLoader(fontname) {
       throw e;
   }
   window.IncrementalFonts[fontname] = fontmetaobj;
+  
+    // For Debug: add a control to set the bandwidth.
+  ForDebug.addBandwidthControl(this, fontname);
 }
 
 /**
@@ -104,9 +108,13 @@ IncrementalFontLoader.prototype.determineCharacters_ = function(codes, text) {
  * @private
  */
 IncrementalFontLoader.prototype.requestBaseFont_ = function() {
-  return IncrementalFontUtils.requestURL('/incremental_fonts/webfonts/' + this.fontname + '/base',
-  'GET', null, {},
+  timer1.start('fetch ' + this.fontname);
+  var bandwidth = ForDebug.getCookie('bandwidth', '0');
+   var baseFont = IncrementalFontUtils.requestURL('/incremental_fonts/webfonts/' + this.fontname + '/base',
+  'GET', null, { 'X-TachyFon-bandwidth': bandwidth },
     'arraybuffer');
+    
+    return baseFont;
 };
 
 /**
@@ -125,6 +133,8 @@ IncrementalFontLoader.prototype.getBaseFont_ = function(inFS, fs, filename) {
     var that = this;
     return this.requestBaseFont_().
     then(function(xfer_bytes) {
+        timer1.end('fetch ' + that.fontname);
+        timer1.start('process ' + that.fontname);
       var data = new DataView(xfer_bytes);
       var fileinfo = IncrementalFontUtils.parseBaseHeader(data);
       for (var key in fileinfo) {
@@ -151,7 +161,8 @@ IncrementalFontLoader.prototype.getBaseFont_ = function(inFS, fs, filename) {
       return IncrementalFontUtils.sanitizeBaseFont(that, raw_base_font);
     }).
     then(function(sanitized_base) {
-      //timer1.end('sanitizeBase');
+      timer1.end('process ' + that.fontname);
+      timer1.end('load base: ' + that.fontname);
       return sanitized_base;
     });
 
@@ -167,8 +178,10 @@ IncrementalFontLoader.prototype.getBaseFont_ = function(inFS, fs, filename) {
  * @return {Promise} Promise to load base font
  */
 IncrementalFontLoader.prototype.getBaseToFileSystem = function(fs, callback) {
+
   var filename = this.fontname + '.ttf';
   var that = this;
+  timer1.start('load base: ' + this.fontname);
   var doesBaseExist = window.IncrementalFonts[this.fontname].idxExist;
 
       return that.getBaseFont_(doesBaseExist, fs, filename).
@@ -177,19 +190,19 @@ IncrementalFontLoader.prototype.getBaseToFileSystem = function(fs, callback) {
       //  return sanitized_base;
       //}).
       then(function(sanitized_base) {
-        //timer1.start('write base to filesystem');
+        timer1.start('set the font ' + that.fontname);
+        var fileURL;
         if (!doesBaseExist) {
           that.baseFont = sanitized_base;
-          var fileURL = URL.createObjectURL(new Blob([sanitized_base],
+          fileURL = URL.createObjectURL(new Blob([sanitized_base],
             {type: 'application/font-sfnt'}));
-          IncrementalFontUtils.setTheFont(that.fontname, fileURL, callback);
         }else {
-          var fileURL = 'filesystem:' + window.location.protocol + '//' +
+          fileURL = 'filesystem:' + window.location.protocol + '//' +
                   window.location.host + '/temporary/' + filename + '?t=' +
                   Date.now();
-          IncrementalFontUtils.setTheFont(that.fontname, fileURL, callback);
         }
-
+        IncrementalFontUtils.setTheFont(that.fontname, fileURL, callback);
+        timer1.end('set the font ' + that.fontname);
         //return fs.writeToTheFile(filename, sanitized_base,
         //  'application/octet-stream');
       });/*.
@@ -289,16 +302,15 @@ IncrementalFontLoader.prototype.injectBundle = function(bundle, callback) {
  * @return {Promise} Promise to update base font using new text and load it
  */
 IncrementalFontLoader.prototype.incrUpdate = function(fs, text, callback) {
-
-  // time_start('incrUpdate')
-  var FILENAME = this.fontname + '.ttf';
+  var requestNo = this.latestRequest++;
+  timer1.start(this.fontname + ' load chars #' + requestNo);
   var that = this;
   var bundleReady = that.requestGlyphs(fs, text);
 
   return bundleReady.
           then(function(bundle) {
             that.injectBundle(bundle, callback);
-            // time_end('incrUpdate')
+             timer1.end(that.fontname + ' load chars #' + requestNo);
           });
 };
 
