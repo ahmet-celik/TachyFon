@@ -68,16 +68,15 @@
 </head>
 
 <body>
+<span style="font-size: 16px; font-family: serif;">
+  Here after first load, font is not cached. Therefore, for all request it will
+  be requested from server again.
   <br>
-  <table id="timingTable" style="text-align: right; font-size: 125%; font-family: sans-serif;">
-    <tr>
-      <th style="text-align: center;">Item</th>
-      <th style="text-align: center;">Start</th>
-      <th style="text-align: center;">End</th>
-      <th style="text-align: center;">Length</th>
-    </tr>
-  </table>
-
+  You may try different bandwidths from dropdown box.
+     <br>
+    <br>
+    
+</span>
   <span style="font-size: 20px; font-family: serif;"> Nanum Brush Script:</span>
   <br>
   <table style="width: 100%;">
@@ -209,7 +208,7 @@ http://qwed01...우낀세상02/18http://qwed01...우낀세상02/18최근에받�
       sequence = sequence.then(function() {return fontLoader.incrUpdate(
                   filesystem, text, makeVisible);});
     });
-    fontLoader.persistState(sequence,filesystem);
+    //fontLoader.persistState(sequence,filesystem);
   </script>
   
 </body>

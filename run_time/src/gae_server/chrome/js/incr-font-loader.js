@@ -162,7 +162,6 @@ IncrementalFontLoader.prototype.getBaseFont_ = function(inFS, fs, filename) {
     }).
     then(function(sanitized_base) {
       timer1.end('process ' + that.fontname);
-      timer1.end('load base: ' + that.fontname);
       return sanitized_base;
     });
 
@@ -190,6 +189,7 @@ IncrementalFontLoader.prototype.getBaseToFileSystem = function(fs, callback) {
       //  return sanitized_base;
       //}).
       then(function(sanitized_base) {
+        timer1.end('load base: ' + that.fontname);
         timer1.start('set the font ' + that.fontname);
         var fileURL;
         if (!doesBaseExist) {
