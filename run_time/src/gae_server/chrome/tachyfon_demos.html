@@ -19,9 +19,33 @@
 <head>
 <meta charset="UTF-8">
 <title>Tachyfon Demos</title>
+  <script>
+    //Support running without demo features.
+    function Timer() {}
+    Timer.prototype.start = function() {};
+    Timer.prototype.end = function() {};
+    Timer.prototype.numberOfTimingRecords = function() {};
+    Timer.prototype.display_timing = function() {};
+    var timer1 = new Timer();
+    var timer2 = new Timer();
+
+  </script>
+  <script src="js/for_debug.js"></script>
+  <script>
+    // For Debug: add a control to set the bandwidth.
+    ForDebug.addBandwidthControl();
+  
+    // For Debug: add a control to set the timing text size.
+    ForDebug.addTimingTextSizeControl();
+  </script>
+  
 </head>
 <body>
 <h1>TachyFon Demos</h1>
+<a href='tachyfon_noto_sans_kr_thin.html'
+  target='_blank'>Noto Sans KR Thin</a><br>  
+<a href='tachyfon_noto_sans_kr_thin_with_demo_features.html'
+  target='_blank'>Noto Sans KR Thin (with demo features)</a><br>  
 <a href='tachyfon_nanum_brush_script.html'
   target='_blank'>Nanum Brush Script</a><br>  
 <a href='tachyfon_nanum_brush_script_with_demo_features.html'
