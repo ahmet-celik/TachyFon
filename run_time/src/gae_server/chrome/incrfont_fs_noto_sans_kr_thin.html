@@ -22,15 +22,12 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Incremental Fonts: Noto Sans KR Thin</title>
 <style>
-  @font-face {
-    font-family: NotoSansKR;
-    font-style: normal;
-    src: url('/incremental_fonts/webfonts/v1NotoSansKR-Thin/NotoSansKR-Thin.woff') format('woff');
-  }
   td {
     vertical-align: top;
   }
 </style>
+
+
   <link rel="stylesheet" type="text/css" href="css/table_styles.css">
   <script src="filesystem:http:/ilffwc.appspot.com/temporary/v1NotoSansKR_Thin_metadata.js"></script>
   <script src="js/binary-font-editor.js"></script>
@@ -62,19 +59,25 @@
     var baseReady = fontLoader.getBaseToFileSystem(filesystem, makeVisible);
     //timer1.end('get base to file system');
   </script>
-
+  <script>
+    // Time the loading of the web font.
+    // For reasons that are completely unclear it appears that the return value
+    // has to be stored for FontFace to work correctly.
+    var x = IncrementalFontUtils.loadWebFont('NotoSansKrThin', 
+      '/incremental_fonts/webfonts/v1NotoSansKR-Thin/NotoSansKR-Thin.woff',
+      'woff');
+  </script>
 </head>
 
 <body>
+<span style="font-size: 16px; font-family: serif;">
+  After first loading of the webpage, fonts is cached to the HTML5 Filesystem,
+  therefore second load is much faster.
   <br>
-  <table id="timingTable" style="text-align: right; font-size: 125%; font-family: sans-serif;">
-    <tr>
-      <th style="text-align: center;">Item</th>
-      <th style="text-align: center;">Start</th>
-      <th style="text-align: center;">End</th>
-      <th style="text-align: center;">Length</th>
-    </tr>
-  </table>
+  You may try different bandwidths from dropdown box.
+   <br>
+    <br>
+</span>
 
   <span style="font-size: 20px; font-family: serif;"> Noto Sans KR Thin:</span>
   <br>
@@ -138,7 +141,7 @@ http://qwed01...우낀세상02/18http://qwed01...우낀세상02/18최근에받�
 세상'sBlogispoweredbyDaum/DesignedbyTistory
 <script>TEXTS[TEXTS.length]=document.getElementById('incrfont').innerText;</script>
       </td>
-      <td id="webfont" style="font-family: NotoSansKR;"> 
+      <td id="webfont" style="font-family: NotoSansKrThin;"> 
 DaumTistory로그인대항해시대공략bset블로그홈|지역로그|태그|미디어로그|방명록|관리자|글쓰기한국어중
 국어음식:머스트-시도-들어본적이없는퓨전요리분류없음2013/10/1123:30이곳은해외"중국음식"는가짜대융합
 경계를벌리고경향이알려져있다.페루는"공항"(야끼소바와튀긴쌀을혼합요리)가,인디언만주닭을가지고,자메이

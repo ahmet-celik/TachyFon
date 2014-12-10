@@ -275,7 +275,7 @@ IncrementalFontUtils.logger = function(url, msg) {
  */
 IncrementalFontUtils.requestCodepoints = function(url, fontname, codes) {
 
-  var bandwidth = ForDebug.getCookie('bandwidth', '0')
+  var bandwidth = ForDebug.getCookie('bandwidth', '0');
   return IncrementalFontUtils.requestURL(
     url + '/incremental_fonts/request',
     'POST',
